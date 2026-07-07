@@ -68,7 +68,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'training_management.wsgi.application'
 
-
 DB_ENGINE = config('DB_ENGINE', default='sqlite')
 
 if DB_ENGINE == 'postgres':

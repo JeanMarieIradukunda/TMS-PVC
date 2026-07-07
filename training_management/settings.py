@@ -1,6 +1,6 @@
 
 from pathlib import Path
-from decouple import config, Csv
+from decouple import config
 
 from dotenv import load_dotenv
 
@@ -16,11 +16,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ---------------------------------------------------------------------------
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me-in-production')
 DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = config(
-    'ALLOWED_HOSTS',
-    default='127.0.0.1,localhost,tms-pvc.vercel.app',
-    cast=Csv()
-)
+ALLOWED_HOSTS = [
+    "tms-pvc.vercel.app",
+    "localhost",
+    "127.0.0.1",
+]
 
 # ---------------------------------------------------------------------------
 # Applications

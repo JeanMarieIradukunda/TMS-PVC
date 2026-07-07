@@ -74,13 +74,14 @@ if DB_ENGINE == 'postgres':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DB_NAME', default='training_db'),
-            'USER': config('DB_USER', default='postgres'),
-            'PASSWORD': config('DB_PASSWORD', default=''),
-            'HOST': config('DB_HOST', default='localhost'),
+            'NAME': config('DB_NAME'),
+            'USER': config('DB_USER'),
+            'PASSWORD': config('DB_PASSWORD'),
+            'HOST': config('DB_HOST'),
             'PORT': config('DB_PORT', default='5432'),
         }
     }
+
 else:
     DATABASES = {
         'default': {
@@ -88,6 +89,7 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+    
 # ---------------------------------------------------------------------------
 # Password validation
 # ---------------------------------------------------------------------------

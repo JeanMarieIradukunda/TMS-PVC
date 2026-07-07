@@ -1,0 +1,1239 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scheme of Work Generator · Training Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    /* ============================================================
+       PROFESSIONAL DOCUMENT DESIGN SYSTEM
+       Scheme of Work — screen + print (A4)
+       Palette: deep navy / institutional gold / teal accent
+       Typeface: Inter (UI + document body), Sora (display headings)
+       ============================================================ */
+
+    :root {
+      --sow-navy:        #0f1b3d;
+      --sow-navy-deep:   #0a1330;
+      --sow-navy-soft:   #1c2b52;
+      --sow-gold:        #c9a227;
+      --sow-gold-soft:   #e8d9a8;
+      --sow-teal:        #2dd4bf;
+      --sow-ink:         #1c2230;
+      --sow-body:        #303a4d;
+      --sow-muted:       #6b7280;
+      --sow-line:        #d7dbe4;
+      --sow-line-soft:   #e9ecf2;
+      --sow-row-alt:     #f6f8fb;
+      --sow-bg-card:     #ffffff;
+    }
+
+    /* Base style.css already sets body { font-family: 'DM Sans', system-ui, sans-serif }
+       site-wide. We only want Inter inside the printable document itself (.gen-doc),
+       not on the whole page, so this page still matches the rest of the TMS. */
+    body.gen-body {
+      color: var(--sow-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- Shell layout override ----------
+       Base style.css centers .gen-shell with a fairly narrow max-width and
+       large auto side margins. The scheme-of-work table has 9 columns and
+       needs real width, so here we widen the shell and swap the centered
+       auto-margins for small fixed side padding instead. */
+    .gen-shell {
+      max-width: 100% !important;
+      width: 100%;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+      box-sizing: border-box;
+    }
+
+    /* ---------- Document container: the printable artifact ---------- */
+    .gen-doc {
+      background: var(--sow-bg-card);
+      border: 1px solid var(--sow-line);
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(15, 27, 61, 0.06), 0 10px 30px rgba(15, 27, 61, 0.06);
+      padding: 2rem 2.25rem 1.75rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 10pt;
+      color: var(--sow-ink);
+      line-height: 1.25;
+    }
+
+    .gen-doc-logos {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .gen-doc-logos img { height: 58px; width: auto; object-fit: contain; }
+
+    /* ---------- Title block ---------- */
+    .gen-doc-title {
+      text-align: center;
+      padding-bottom: 0.9rem;
+      margin-bottom: 1.1rem;
+      border-bottom: 3px solid var(--sow-navy);
+      position: relative;
+    }
+    .gen-doc-title::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -3px;
+      transform: translateX(-50%);
+      width: 96px;
+      height: 3px;
+      background: var(--sow-gold);
+    }
+    .gen-doc-kicker {
+      font-family: 'Inter', sans-serif;
+      font-size: 8.5pt;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--sow-navy-soft);
+      margin-bottom: 0.3rem;
+    }
+    .gen-doc-title h3 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 17pt;
+      letter-spacing: 0.005em;
+      color: var(--sow-navy);
+      margin: 0.1rem 0 0.35rem;
+      text-transform: uppercase;
+    }
+    .gen-doc-title p {
+      font-size: 9pt;
+      color: var(--sow-muted);
+      font-style: italic;
+      margin: 0;
+    }
+
+    /* ---------- Subject / meta information grid ---------- */
+    .gen-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.35rem 2rem;
+      background: var(--sow-row-alt);
+      border: 1px solid var(--sow-line-soft);
+      border-radius: 8px;
+      padding: 0.85rem 1.1rem;
+      margin-bottom: 1.3rem;
+    }
+    .gen-meta-grid > div {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.2rem 0;
+      border-bottom: 1px dashed var(--sow-line);
+    }
+    .gen-meta-grid > div:nth-last-child(-n+2) { border-bottom: none; }
+    .gen-meta-grid dt {
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: var(--sow-navy-soft);
+      white-space: nowrap;
+      margin: 0;
+      /* base style.css sets .gen-meta-grid dt { text-transform: uppercase; letter-spacing: 0.06em; }
+         reset both so labels render in normal sentence case as designed */
+      text-transform: none;
+      letter-spacing: normal;
+    }
+    .gen-meta-grid dd {
+      font-size: 10pt;
+      color: var(--sow-ink);
+      text-align: right;
+      margin: 0;
+      font-weight: 500;
+    }
+
+    /* ---------- Section headings (e.g. "Weekly scheme of work") ---------- */
+    .gen-section-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 13pt;
+      font-weight: 700;
+      color: var(--sow-navy);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0 0 0.6rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--sow-line-soft);
+      letter-spacing: 0.005em;
+    }
+    .gen-section-title i { color: var(--sow-gold); font-size: 0.9em; }
+
+    /* ---------- Table wrapper ---------- */
+    .gen-table-wrap {
+      border: 1px solid var(--sow-line);
+      border-radius: 8px;
+      /* base style.css sets overflow-x: auto for small-screen scroll fallback —
+         use overflow-y only here so that behavior isn't cancelled */
+      overflow-x: auto;
+      overflow-y: hidden;
+      margin-bottom: 2.1rem;
+    }
+
+    /* table-layout: auto (rather than fixed) lets narrow columns like Weeks
+       & Dates / Learning Hours shrink to their actual content instead of
+       being forced into an equal share of the table width; the remaining
+       width is then distributed across the content-heavy columns. */
+    .gen-table-v2 {
+      table-layout: auto;
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-family: 'Inter', 'Aptos', 'Calibri', sans-serif;
+      font-size: 9.5pt;
+    }
+    /* These widths are hints only (table-layout is auto) — actual rendered
+       width also depends on content, but they keep the relative proportions
+       sane on first paint. Weeks & Hours get no wide hint on purpose; see
+       the shrink-to-fit rule below for how they're kept genuinely small. */
+    .gen-table-v2 col.col-lu        { width: 12%; }
+    .gen-table-v2 col.col-ic        { width: 19%; }
+    .gen-table-v2 col.col-activ     { width: 14%; }
+    .gen-table-v2 col.col-resources { width: 14%; }
+    .gen-table-v2 col.col-place     { width: 8%; }
+    .gen-table-v2 col.col-evidence  { width: 12%; }
+    .gen-table-v2 col.col-obs       { width: 10%; }
+
+    .gen-table-v2 thead th {
+      background: var(--sow-navy);
+      background-image: linear-gradient(180deg, var(--sow-navy) 0%, var(--sow-navy-deep) 100%);
+      color: #ffffff;
+      font-family: 'Inter', 'Aptos', 'Calibri', sans-serif;
+      font-size: 9.5pt;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      text-align: center;
+      vertical-align: middle;
+      padding: 0.22rem 0.3rem;
+      line-height: 1.15;
+      border-bottom: 2px solid var(--sow-gold);
+      /* base style.css sets .gen-table th { text-transform: uppercase; white-space: nowrap; }
+         both leak through onto this element unless explicitly reset here */
+      text-transform: none;
+      white-space: normal;
+    }
+    .gen-table-v2 thead th:not(:last-child) {
+      border-right: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .gen-table-v2 th, .gen-table-v2 td {
+      font-size: 9.5pt;
+      vertical-align: middle;
+      text-align: left;
+      word-break: break-word;
+      /* ~0.06in cell margin, matching Word's 0.05-0.08in recommendation */
+      padding: 0.22rem 0.3rem;
+      border-bottom: 1px solid var(--sow-line-soft);
+      border-right: 1px solid var(--sow-line-soft);
+      line-height: 1.15;
+    }
+    .gen-table-v2 td:last-child, .gen-table-v2 th:last-child { border-right: none; }
+    .gen-table-v2 tbody tr:last-child td { border-bottom: none; }
+
+    /* Shrink-to-fit for Weeks & Dates (col 1) and Learning Hours (col 3):
+       width: 1% is a well-known table trick that, combined with
+       white-space: nowrap on the cell content, makes an auto-layout column
+       take only the width its content actually needs instead of an equal
+       fixed share — freeing space for the content-heavy columns. */
+    .gen-table-v2 th:nth-child(1), .gen-table-v2 td:nth-child(1),
+    .gen-table-v2 th:nth-child(3), .gen-table-v2 td:nth-child(3) {
+      width: 1%;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    /* Alternating row shading for readability */
+    .gen-table-v2 tbody tr:nth-child(even) td { background: var(--sow-row-alt); }
+    .gen-table-v2 tbody tr:nth-child(odd) td  { background: #ffffff; }
+
+    /* Keep rows intact when printed / exported */
+    .gen-table-v2 tbody tr { break-inside: avoid; page-break-inside: avoid; }
+    .gen-table-v2 thead { display: table-header-group; }
+
+    .gen-week-pill {
+      display: inline-block;
+      font-weight: 700;
+      font-size: 9pt;
+      color: var(--sow-navy);
+      background: var(--sow-gold-soft);
+      border: 1px solid var(--sow-gold);
+      border-radius: 999px;
+      padding: 0.03rem 0.45rem;
+      line-height: 1.3;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+
+    /* ---------- Bulleted list rendering inside table cells ----------
+       Used ONLY by Indicative Content now (always a <ul>). Learning
+       Activities, Resources, Learning Place and Evidence are all plain,
+       single-line comma-separated text — no list markup. */
+    .gen-bullets {
+      margin: 0;
+      padding-left: 0.9rem;
+    }
+    .gen-bullets li {
+      margin-bottom: 0.08rem;
+      padding-left: 0.05rem;
+      line-height: 1.2;
+    }
+    .gen-bullets li:last-child { margin-bottom: 0; }
+    .gen-bullets li::marker {
+      color: var(--sow-navy-soft);
+    }
+
+    .gen-editable-cell {
+      background: rgba(45, 212, 191, 0.05);
+      outline-offset: 2px;
+      cursor: text;
+      position: relative;
+    }
+
+    .gen-editable-cell:hover { background: rgba(45, 212, 191, 0.1); }
+
+    .gen-editable-cell:focus {
+      outline: 1.5px dashed var(--teal, #2dd4bf);
+      background: rgba(45, 212, 191, 0.12);
+      /* base style.css's [contenteditable="true"]:focus adds its own box-shadow ring;
+         suppress it here so cells don't show both a ring and a dashed outline at once */
+      box-shadow: none;
+    }
+
+    .gen-placeholder-text {
+      color: #9aa3b8;
+      font-style: italic;
+      font-size: 9pt;
+      line-height: 1.2;
+    }
+
+    .gen-editable-cell:focus .gen-placeholder-text,
+    .gen-editable-inline:focus {
+      color: inherit;
+      font-style: normal;
+    }
+
+    .gen-week-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.12rem;
+    }
+
+    .gen-editable-inline {
+      display: inline-block;
+      color: #9aa3b8;
+      font-style: italic;
+      font-size: 8.5pt;
+      line-height: 1.2;
+    }
+
+    .gen-editable-inline:focus { outline: 1.5px dashed var(--teal, #2dd4bf); outline-offset: 2px; }
+
+    /* ---------- AI generation additions ---------- */
+    .gen-ai-toolbar-btn.is-loading { pointer-events: none; opacity: 0.7; }
+
+    .gen-ai-loading-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: #6b7280;
+      font-style: italic;
+      font-size: 9pt;
+    }
+
+    .gen-ai-loading-text .fa-spin { font-size: 0.75rem; }
+
+    .gen-editable-cell.gen-ai-filled {
+      background: rgba(124, 58, 237, 0.06);
+    }
+
+    .gen-editable-cell.gen-ai-filled:hover { background: rgba(124, 58, 237, 0.1); }
+
+    .gen-ai-badge {
+      position: absolute;
+      top: 2px;
+      right: 4px;
+      font-size: 0.58rem;
+      letter-spacing: 0.03em;
+      color: #7c3aed;
+      background: rgba(124, 58, 237, 0.12);
+      border-radius: 999px;
+      padding: 0 5px;
+      line-height: 1.3;
+      pointer-events: none;
+    }
+
+    .gen-ai-error-text {
+      color: #b42318;
+      font-style: italic;
+      font-size: 9pt;
+    }
+
+    /* ---------- Sign-off block ---------- */
+    .gen-signoff-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin: 1.6rem 0 1.4rem;
+      padding-top: 1.1rem;
+      border-top: 1px solid var(--sow-line);
+    }
+    /* Matches base style.css's ".gen-signoff-grid .gen-signoff-line" specificity
+       (two classes) — a plain ".gen-signoff-line" rule loses that cascade fight
+       even when declared later, since specificity outranks source order. */
+    .gen-signoff-grid .gen-signoff-line {
+      font-size: 10pt;
+      font-weight: 600;
+      color: var(--sow-navy-soft);
+      border-top: none;
+      padding-top: 0;
+    }
+    .gen-signoff-line span[contenteditable] {
+      display: inline-block;
+      min-width: 140px;
+      border-bottom: 1px solid var(--sow-line);
+      margin-left: 0.35rem;
+      padding: 0.1rem 0.2rem;
+      font-weight: 400;
+      color: var(--sow-ink);
+    }
+    .gen-signoff-line span[contenteditable]:focus {
+      outline: none;
+      border-bottom: 1.5px solid var(--sow-teal);
+    }
+
+    /* ---------- Footer ---------- */
+    .gen-doc-footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 8.7pt;
+      color: var(--sow-muted);
+      letter-spacing: 0.02em;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--sow-line-soft);
+    }
+    .gen-doc-footer span:first-child { font-weight: 700; color: var(--sow-navy-soft); }
+
+    /* ---------- Screen chrome: hero / cards / toolbar polish ---------- */
+    .gen-hero {
+      background: linear-gradient(135deg, var(--sow-navy-deep) 0%, var(--sow-navy) 55%, var(--sow-navy-soft) 100%);
+    }
+    .gen-eyebrow { color: var(--sow-gold-soft); }
+    .gen-hero h1 { font-family: 'Sora', sans-serif; letter-spacing: 0.01em; }
+
+    .gen-card {
+      border-radius: 10px;
+      box-shadow: 0 1px 2px rgba(15, 27, 61, 0.05), 0 8px 24px rgba(15, 27, 61, 0.05);
+    }
+
+    .gen-toolbar {
+      background: #ffffff;
+      border: 1px solid var(--sow-line);
+      border-radius: 8px;
+      padding: 0.85rem 1.1rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .gen-save-note {
+      font-size: 0.85rem;
+      color: var(--sow-muted);
+      background: var(--sow-row-alt);
+      border: 1px solid var(--sow-line-soft);
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      margin-top: 1.1rem;
+    }
+/* ============================================================
+   UPGRADED PRINT / EXPORT RULES (DYNAMIC & FLEXIBLE)
+   ============================================================ */
+@page {
+  /* Allows the user to select Orientation (Portrait/Landscape)
+     and Paper Size (A4, Letter, etc.) in the browser print settings */
+  size: auto;
+  margin: 15mm 13mm 16mm;
+}
+
+@media print {
+  /* 1. Reset Root & Body for Page-Flow (Kills Scrollbars) */
+  html, body, body.gen-body {
+    background: #fff !important;
+    color: #000 !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important; /* Forces hidden scroll data to render */
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    position: static !important; /* Prevents absolute containers pinning height */
+  }
+
+  /* Hide unnecessary UI elements */
+  .no-print, .gen-ai-badge, ::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* 1b. Hide placeholder text in cells the trainer never filled in, plus
+     any transient loading/error states — none of these belong on a
+     printed/exported document. The cell itself still prints, just empty. */
+  .gen-placeholder-text,
+  .gen-editable-inline[data-placeholder="true"],
+  .gen-ai-loading-text,
+  .gen-ai-error-text {
+    display: none !important;
+  }
+
+  /* 2. Container Layout Resets */
+  .gen-shell {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .gen-doc {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  /* 3. Force Tables & Wrappers to Expand (No Scrolling) */
+  .gen-table-wrap {
+    border-radius: 0;
+    border: 1px solid #999;
+    overflow: visible !important; /* Critical: Unlocks hidden table rows */
+    max-height: none !important;  /* Overrides any fixed heights */
+    width: 100% !important;
+    display: table !important;    /* Forces traditional block flow */
+  }
+
+  table, .gen-table-v2 {
+    width: 100% !important;
+    table-layout: auto !important; /* Allows cells to adjust to content size */
+    border-collapse: collapse !important;
+    page-break-inside: auto;
+  }
+
+  /* 4. Smart Page-Breaks (Prevents ugly split lines/headers) */
+  tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  thead {
+    display: table-header-group !important; /* Repeats table header on every page */
+  }
+
+  .gen-doc-title,
+  .gen-section-title,
+  .gen-signoff-grid,
+  h1, h2, h3, h4, h5, h6 {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important; /* Stops headings from being left alone at bottom */
+  }
+
+  /* 5. Color and Text Adjustments */
+  .gen-table-v2 thead th {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background: var(--sow-navy, #002060) !important;
+    color: #fff !important;
+  }
+
+  .gen-table-v2 tbody tr:nth-child(even) td {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background: #f6f8fb !important;
+  }
+
+  .gen-editable-cell, .gen-editable-inline {
+    background: none !important;
+    outline: none !important;
+    border: none !important;
+  }
+
+  .gen-week-pill {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Keep AI list markers in their theme colors when printed */
+  .gen-bullets li::marker { color: var(--sow-navy-soft) !important; }
+
+  /* 6. Dynamic Page Numbering */
+  .gen-doc-footer::after {
+    content: "Page " counter(page) " of " counter(pages);
+  }
+}
+  </style>
+</head>
+<body class="gen-body">
+
+  <!-- ==================== HERO ==================== -->
+  <header class="gen-hero">
+    <div class="gen-hero-top">
+      <a href="{% url 'landing' %}" class="gen-back-link">
+        <i class="fa-solid fa-arrow-left-long"></i> Back to home
+      </a>
+      <a href="{% url 'login' %}" class="gen-back-link">
+        Staff login <i class="fa-solid fa-right-to-bracket"></i>
+      </a>
+    </div>
+    <div class="gen-hero-heading">
+      <div class="gen-eyebrow"><i class="fa-solid fa-lock-open"></i> Public tool · no login required</div>
+      <h1>Scheme of Work Generator</h1>
+
+    </div>
+  </header>
+
+  <div class="gen-shell">
+
+    <!-- ==================== SELECTOR ==================== -->
+    <section class="gen-card no-print" id="selectorCard">
+      <h2>1. Choose trade, level &amp; module</h2>
+      <p class="gen-card-sub">The level and module lists narrow down automatically based on what you pick.</p>
+
+      <div id="noDataAlert" class="gen-alert-empty d-none">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <div>
+          No trades have been set up in the system yet. Please ask an administrator to add
+          sectors, trades and modules before a scheme of work can be generated.
+        </div>
+      </div>
+
+      <div id="selectorFields">
+        <div class="gen-field-grid">
+          <div>
+            <label class="form-label" for="tradeSelect">Trade <span class="req">*</span></label>
+            <select class="form-select" id="tradeSelect">
+              <option value="">Select trade</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label" for="levelSelect">Level <span class="req">*</span></label>
+            <select class="form-select" id="levelSelect" disabled>
+              <option value="">Select trade first</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label" for="moduleSelect">Module <span class="req">*</span></label>
+            <select class="form-select" id="moduleSelect" disabled>
+              <option value="">Select level first</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label" for="hoursPerWeekInput">Training hours per week</label>
+            <input type="number" class="form-control" id="hoursPerWeekInput" min="1" max="40" value="5">
+          </div>
+        </div>
+
+        <div class="gen-actions-row">
+          <button type="button" class="btn btn-gold" id="generateBtn">
+            <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Generate scheme of work
+          </button>
+          <button type="button" class="btn btn-outline-secondary" id="resetBtn">
+            <i class="fa-solid fa-rotate-left me-1"></i> Reset
+          </button>
+        </div>
+        <p class="gen-hint">Hours per week only affects how outcomes are spread across weeks — it doesn't change the module's total learning hours.</p>
+      </div>
+    </section>
+
+    <!-- ==================== GENERATED DOCUMENT ==================== -->
+    <section id="docSection" class="d-none">
+
+      <div class="gen-toolbar no-print">
+        <div class="gen-toolbar-note">
+          <i class="fa-solid fa-pen me-1"></i>
+          Dates, learning activities, resources, learning place, evidence and observations are
+          editable — click any highlighted cell to fill it in before printing.
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <button type="button" class="btn btn-outline-secondary btn-sm" id="editSelectionBtn">
+            <i class="fa-solid fa-sliders me-1"></i> Edit selection
+          </button>
+          <button type="button" class="btn btn-outline-primary btn-sm gen-ai-toolbar-btn" id="aiGenerateBtn">
+            <i class="fa-solid fa-robot me-1"></i> Generate with AI
+          </button>
+          <button type="button" class="btn btn-gold btn-sm" id="printBtn">
+            <i class="fa-solid fa-print me-1"></i> Print / save as PDF
+          </button>
+        </div>
+      </div>
+
+      <article class="gen-doc" id="genDoc">
+        <div class="gen-doc-logos" id="docLogos"></div>
+
+        <div class="gen-doc-title">
+          <h3>Scheme of Work</h3>
+          <p id="docGeneratedOn"></p>
+        </div>
+
+        <dl class="gen-meta-grid" id="docMeta"></dl>
+
+        <div class="gen-table-wrap">
+          <table class="gen-table gen-table-v2">
+            <colgroup>
+              <col class="col-weeks">
+              <col class="col-lu">
+              <col class="col-hours">
+              <col class="col-ic">
+              <col class="col-activ">
+              <col class="col-resources">
+              <col class="col-place">
+              <col class="col-evidence">
+              <col class="col-obs">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Weeks &amp; Dates</th>
+                <th>Learning Unit (LU)</th>
+                <th>Learning Hours</th>
+                <th>Indicative Content (IC)</th>
+                <th>Learning Activities</th>
+                <th>Resources (Equipment, Tools &amp; Materials)</th>
+                <th>Learning Place</th>
+                <th>Evidences of Formative Assessment</th>
+                <th>Observations</th>
+              </tr>
+            </thead>
+            <tbody id="docTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="gen-signoff-grid">
+          <div class="gen-signoff-line">Prepared by: <span contenteditable="true" id="docPreparedBy">&nbsp;</span></div>
+          <div class="gen-signoff-line">Verified by: <span contenteditable="true">&nbsp;</span></div>
+          <div class="gen-signoff-line">Approved by: <span contenteditable="true">&nbsp;</span></div>
+        </div>
+
+        <div class="gen-doc-footer">
+          <span>Training Management System</span>
+          <span>Scheme of Work · <span id="docFooterModule"></span></span>
+        </div>
+      </article>
+
+      <div class="gen-save-note no-print">
+        <i class="fa-solid fa-circle-info"></i>
+        <div>
+          This preview is generated on the fly and isn't saved anywhere automatically — use
+          "Print / save as PDF" to keep a copy. AI-drafted cells are marked with a small
+          <strong>AI</strong> badge and stay fully editable so a trainer can review and adjust
+          them — Learning Activities, Resources and Evidence are all short comma-separated
+          lines. Staff can
+          <a href="{% url 'login' %}">sign in</a> to manage the underlying modules, outcomes
+          and indicative content directly.
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Curriculum snapshot: sectors, trades, levels, trade/level links, modules,
+       learning outcomes, indicative contents, trainers and logos — everything
+       the cascading selects and the document below are built from. -->
+  <script type="application/json" id="tms-data">{{ tms_data_json|safe }}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'js/main.js' %}"></script>
+  <script src="{% static 'js/generator.js' %}"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      // ------------------------------------------------------------------
+      // AI generation config.
+      //
+      // This calls a same-origin Django endpoint (NOT the Groq API directly)
+      // so the Groq API key stays on the server and is never shipped to this
+      // public, unauthenticated page. See the accompanying views.py / urls.py
+      // snippet for the backend half of this integration.
+      // ------------------------------------------------------------------
+      var AI_ENDPOINT = '/api/scheme-of-work/ai-generate/';
+
+      var data = TMSGen.readData() || {
+        sectors: [], trades: [], levels: [], trade_levels: [],
+        modules: [], outcomes: [], contents: [], trainers: [], logos: [],
+      };
+
+      var tradeSelect = document.getElementById('tradeSelect');
+      var levelSelect = document.getElementById('levelSelect');
+      var moduleSelect = document.getElementById('moduleSelect');
+      var hoursPerWeekInput = document.getElementById('hoursPerWeekInput');
+      var generateBtn = document.getElementById('generateBtn');
+      var resetBtn = document.getElementById('resetBtn');
+      var editSelectionBtn = document.getElementById('editSelectionBtn');
+      var printBtn = document.getElementById('printBtn');
+      var aiGenerateBtn = document.getElementById('aiGenerateBtn');
+      var docSection = document.getElementById('docSection');
+      var noDataAlert = document.getElementById('noDataAlert');
+      var selectorFields = document.getElementById('selectorFields');
+
+      var sectorsById = indexBy(data.sectors, 'id');
+      var modulesById = indexBy(data.modules, 'id');
+
+      // Snapshot of whatever was last generated, so the AI button can build
+      // its request without re-reading the DOM.
+      var currentContext = null; // { mod, trade, level, sector, outcomes, hoursPerWeek }
+
+      function indexBy(list, key) {
+        var map = {};
+        (list || []).forEach(function (item) { map[item[key]] = item; });
+        return map;
+      }
+
+      function init() {
+        if (!data.trades || data.trades.length === 0) {
+          noDataAlert.classList.remove('d-none');
+          selectorFields.classList.add('d-none');
+          return;
+        }
+
+        TMSGen.populateSelect(tradeSelect, data.trades, {
+          valueKey: 'id',
+          labelFn: function (t) { return t.trade_name; },
+          placeholder: 'Select trade',
+        });
+
+        tradeSelect.addEventListener('change', onTradeChange);
+        levelSelect.addEventListener('change', onLevelChange);
+        generateBtn.addEventListener('click', onGenerate);
+        resetBtn.addEventListener('click', onReset);
+        editSelectionBtn.addEventListener('click', function () {
+          selectorFields.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        printBtn.addEventListener('click', TMSGen.print);
+        aiGenerateBtn.addEventListener('click', onAiGenerate);
+      }
+
+      function onTradeChange() {
+        var tradeId = tradeSelect.value ? Number(tradeSelect.value) : null;
+        moduleSelect.innerHTML = '<option value="">Select level first</option>';
+        moduleSelect.disabled = true;
+
+        if (!tradeId) {
+          levelSelect.innerHTML = '<option value="">Select trade first</option>';
+          levelSelect.disabled = true;
+          return;
+        }
+
+        var levelIds = data.trade_levels
+          .filter(function (tl) { return tl.trade_id === tradeId; })
+          .map(function (tl) { return tl.level_id; });
+
+        var levels = data.levels.filter(function (lvl) { return levelIds.indexOf(lvl.id) !== -1; });
+
+        TMSGen.populateSelect(levelSelect, levels, {
+          valueKey: 'id',
+          labelFn: function (l) { return l.class_level; },
+          placeholder: levels.length ? 'Select level' : 'No levels linked to this trade',
+        });
+      }
+
+      function onLevelChange() {
+        var tradeId = tradeSelect.value ? Number(tradeSelect.value) : null;
+        var levelId = levelSelect.value ? Number(levelSelect.value) : null;
+
+        if (!tradeId || !levelId) {
+          moduleSelect.innerHTML = '<option value="">Select level first</option>';
+          moduleSelect.disabled = true;
+          return;
+        }
+
+        var modules = data.modules.filter(function (m) {
+          return m.trade_id === tradeId && m.level_id === levelId;
+        });
+
+        TMSGen.populateSelect(moduleSelect, modules, {
+          valueKey: 'id',
+          labelFn: function (m) { return m.mod_code + ' — ' + m.mod_name; },
+          placeholder: modules.length ? 'Select module' : 'No modules for this trade & level',
+        });
+      }
+
+      function onReset() {
+        tradeSelect.value = '';
+        onTradeChange();
+        docSection.classList.add('d-none');
+        currentContext = null;
+      }
+
+      function onGenerate() {
+        var moduleId = moduleSelect.value ? Number(moduleSelect.value) : null;
+        if (!moduleId) {
+          TMS.toast('Please select a trade, level and module first.', 'danger');
+          return;
+        }
+
+        var mod = modulesById[moduleId];
+        var trade = data.trades.find(function (t) { return t.id === mod.trade_id; });
+        var level = data.levels.find(function (l) { return l.id === mod.level_id; });
+        var sector = trade ? sectorsById[trade.sector_id] : null;
+        var hoursPerWeek = Math.max(1, parseInt(hoursPerWeekInput.value, 10) || 5);
+
+        var outcomes = data.outcomes
+          .filter(function (o) { return o.module_id === moduleId; })
+          .sort(function (a, b) { return a.id - b.id; });
+
+        currentContext = {
+          mod: mod, trade: trade, level: level, sector: sector,
+          outcomes: outcomes, hoursPerWeek: hoursPerWeek,
+        };
+
+        renderLogos(data.logos);
+        renderMeta({
+          sector: sector ? sector.sector_name : '\u2014',
+          trade: trade ? trade.trade_name : '\u2014',
+          level: level ? level.class_level : '\u2014',
+          mod: mod,
+        });
+        renderTable(outcomes, hoursPerWeek);
+
+        document.getElementById('docPreparedBy').textContent = mod.trainer_name || '';
+        document.getElementById('docFooterModule').textContent = mod.mod_code + ' \u2014 ' + mod.mod_name;
+
+        docSection.classList.remove('d-none');
+        docSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      function renderLogos(logos) {
+        var wrap = document.getElementById('docLogos');
+        wrap.innerHTML = '';
+        (logos || []).forEach(function (logo) {
+          var img = document.createElement('img');
+          img.src = logo.image;
+          img.alt = logo.name;
+          wrap.appendChild(img);
+        });
+      }
+
+      function renderMeta(ctx) {
+        var mod = ctx.mod;
+        var rows = [
+          ['Sector', ctx.sector],
+          ['Trade', ctx.trade],
+          ['Level', ctx.level],
+          ['Module code', mod.mod_code],
+          ['Module name', mod.mod_name],
+          ['Trainer', mod.trainer_name || '\u2014'],
+          ['Term', mod.term || '\u2014'],
+          ['Total learning hours', mod.learning_hours + ' hrs'],
+        ];
+        var el = document.getElementById('docMeta');
+        el.innerHTML = rows.map(function (r) {
+          return '<div><dt>' + TMSGen.escapeHtml(r[0]) + '</dt><dd>' + TMSGen.escapeHtml(r[1]) + '</dd></div>';
+        }).join('');
+      }
+
+      function contentsForOutcome(outcomeId) {
+        return data.contents
+          .filter(function (c) { return c.outcome_id === outcomeId; })
+          .map(function (c) { return c.indic_name; });
+      }
+
+      /**
+       * Renders the 9-column REB-style scheme of work body:
+       *   1. Weeks & Dates            (auto week label + editable date — narrow, shrink-to-fit)
+       *   2. Learning Unit (LU)       (from the module's learning outcome)
+       *   3. Learning Hours           (from the learning outcome — narrow, shrink-to-fit)
+       *   4. Indicative Content (IC)  (bulleted, from indicative content)
+       *   5. Learning Activities      (editable, AI-fillable — comma-separated line, max 3 methodologies)
+       *   6. Resources                (editable, AI-fillable — comma-separated line)
+       *   7. Learning Place           (editable, AI-fillable — plain text)
+       *   8. Evidences of Formative Assessment (editable, AI-fillable — comma-separated line, e.g. assessment type)
+       *   9. Observations             (editable, placeholder text — left to the trainer)
+       */
+      function renderTable(outcomes, hoursPerWeek) {
+        var tbody = document.getElementById('docTableBody');
+
+        if (!outcomes.length) {
+          tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">' +
+            'No learning outcomes have been added for this module yet.</td></tr>';
+          return;
+        }
+
+        var week = 1;
+        var rowsHtml = outcomes.map(function (outcome) {
+          var weeksNeeded = Math.max(1, Math.ceil(outcome.learning_hours / hoursPerWeek));
+          var weekLabel = weeksNeeded > 1
+            ? ('Week ' + week + '\u2013' + (week + weeksNeeded - 1))
+            : ('Week ' + week);
+          week += weeksNeeded;
+
+          var contentItems = data.contents
+            .filter(function (c) { return c.outcome_id === outcome.id; })
+            .map(function (c) { return '<li>' + TMSGen.escapeHtml(c.indic_name) + '</li>'; })
+            .join('');
+
+          var contentCell = contentItems
+            ? ('<ul class="gen-bullets">' + contentItems + '</ul>')
+            : '<span class="text-muted">No indicative content added.</span>';
+
+          return '' +
+            '<tr data-outcome-id="' + outcome.id + '">' +
+              '<td class="gen-editable-cell">' +
+                '<div class="gen-week-cell">' +
+                  '<span class="gen-week-pill" contenteditable="false">' + TMSGen.escapeHtml(weekLabel) + '</span>' +
+                  '<span class="gen-editable-inline" contenteditable="true" data-placeholder="true">[Insert Date]</span>' +
+                '</div>' +
+              '</td>' +
+              '<td>' + TMSGen.escapeHtml(TMSGen.shortOutcomeText(outcome.outcome_text)) + '</td>' +
+              '<td>' + outcome.learning_hours + '</td>' +
+              '<td>' + contentCell + '</td>' +
+              '<td class="gen-editable-cell" contenteditable="true" data-field="learning_activities">' +
+                '<span class="gen-placeholder-text">[Methodologies, comma-separated, max 3]</span>' +
+              '</td>' +
+              '<td class="gen-editable-cell" contenteditable="true" data-field="resources">' +
+                '<span class="gen-placeholder-text">[Tools, equipment &amp; materials, comma-separated]</span>' +
+              '</td>' +
+              '<td class="gen-editable-cell" contenteditable="true" data-field="learning_place">' +
+                '<span class="gen-placeholder-text">[Specify location, e.g. Classroom / Lab / Workshop]</span>' +
+              '</td>' +
+              '<td class="gen-editable-cell" contenteditable="true" data-field="evidence">' +
+                '<span class="gen-placeholder-text">[Assessment type, e.g. Written / Oral / Practical / Assignment]</span>' +
+              '</td>' +
+              '<td class="gen-editable-cell" contenteditable="true" data-field="observations">' +
+                '<span class="gen-placeholder-text">[Add notes / progress tracking]</span>' +
+              '</td>' +
+            '</tr>';
+        }).join('');
+
+        tbody.innerHTML = rowsHtml;
+
+        // Clear a cell's placeholder text the first time the trainer clicks into it.
+        tbody.querySelectorAll('.gen-editable-cell, .gen-editable-inline').forEach(function (cell) {
+          cell.addEventListener('focus', function onFocus() {
+            var placeholder = cell.querySelector ? cell.querySelector('.gen-placeholder-text') : null;
+            if (placeholder) {
+              cell.textContent = '';
+            } else if (cell.classList.contains('gen-editable-inline') && cell.getAttribute('data-placeholder') === 'true') {
+              cell.textContent = '';
+              cell.removeAttribute('data-placeholder');
+            }
+            cell.classList.remove('gen-ai-filled');
+            var badge = cell.querySelector('.gen-ai-badge');
+            if (badge) badge.remove();
+          }, { once: true });
+        });
+      }
+
+      // ------------------------------------------------------------------
+      // AI (Groq) generation for Learning Activities, Resources,
+      // Learning Place and Evidences of Formative Assessment.
+      //
+      // Backend field shapes — ALL plain, single-line, comma-separated
+      // strings (no bullets, no numbering, no JSON arrays):
+      //   - learning_activities: at most 3 facilitation methodologies
+      //     (e.g. "Demonstration, Group discussion").
+      //   - resources: tools/equipment/materials specific to that row's
+      //     outcome & indicative content.
+      //   - learning_place: a single plain-text value.
+      //   - evidence: assessment type(s) for that outcome, usually just
+      //     one (e.g. "Practical assessment").
+      // ------------------------------------------------------------------
+
+      function getCookie(name) {
+        var match = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+        return match ? decodeURIComponent(match.pop()) : '';
+      }
+
+      function setAiButtonLoading(isLoading) {
+        aiGenerateBtn.classList.toggle('is-loading', isLoading);
+        aiGenerateBtn.disabled = isLoading;
+        aiGenerateBtn.innerHTML = isLoading
+          ? '<i class="fa-solid fa-spinner fa-spin me-1"></i> Generating…'
+          : '<i class="fa-solid fa-robot me-1"></i> Generate with AI';
+      }
+
+      function markRowsLoading(outcomeIds) {
+        var fields = ['learning_activities', 'resources', 'learning_place', 'evidence'];
+        outcomeIds.forEach(function (id) {
+          var row = document.querySelector('tr[data-outcome-id="' + id + '"]');
+          if (!row) return;
+          fields.forEach(function (field) {
+            var cell = row.querySelector('[data-field="' + field + '"]');
+            if (!cell) return;
+            cell.innerHTML = '<span class="gen-ai-loading-text"><i class="fa-solid fa-circle-notch fa-spin"></i> Drafting…</span>';
+          });
+        });
+      }
+
+      /**
+       * Normalizes an AI value into a clean array of non-empty item strings.
+       * Accepts either an array or a comma/semicolon/newline-separated
+       * string, so both the current backend shape and any older cached
+       * response are handled the same way.
+       */
+      function toItemList(value) {
+        if (Array.isArray(value)) {
+          return value.map(function (v) { return (v || '').toString().trim(); }).filter(Boolean);
+        }
+        if (typeof value === 'string' && value.trim()) {
+          return value.split(/\r?\n|;|,/)
+            .map(function (s) { return s.trim(); })
+            .filter(Boolean);
+        }
+        return [];
+      }
+
+      /**
+       * Joins an AI value into a single comma-separated line — used for
+       * Learning Activities, Resources and Evidence, which all render as
+       * plain text (no bullets/numbering), optionally capped to a max
+       * item count.
+       */
+      function toCsvLine(value, maxItems) {
+        var items = toItemList(value);
+        if (maxItems) items = items.slice(0, maxItems);
+        return items.join(', ');
+      }
+
+      function fillRowWithAiResult(outcomeId, result) {
+        var row = document.querySelector('tr[data-outcome-id="' + outcomeId + '"]');
+        if (!row) return;
+
+        // Learning Activities (max 3 methodologies), Resources, and
+        // Evidence (max 2 assessment types) all render as a single
+        // comma-separated line — plain text, no bullets/numbering.
+        var csvFieldConfig = {
+          learning_activities: { value: result.learning_activities, maxItems: 3 },
+          resources: { value: result.resources, maxItems: null },
+          evidence: { value: result.evidence, maxItems: 2 },
+        };
+
+        Object.keys(csvFieldConfig).forEach(function (field) {
+          var cell = row.querySelector('[data-field="' + field + '"]');
+          if (!cell) return;
+          var cfg = csvFieldConfig[field];
+          var line = toCsvLine(cfg.value, cfg.maxItems);
+          if (!line) {
+            cell.innerHTML = '<span class="gen-ai-error-text">AI did not return content — click to fill in manually.</span>';
+            return;
+          }
+          cell.innerHTML = TMSGen.escapeHtml(line) + '<span class="gen-ai-badge">AI</span>';
+          cell.classList.add('gen-ai-filled');
+        });
+
+        // Learning Place stays a single plain-text value (not a list).
+        var placeCell = row.querySelector('[data-field="learning_place"]');
+        if (placeCell) {
+          var placeText = (result.learning_place || '').toString().trim();
+          if (!placeText) {
+            placeCell.innerHTML = '<span class="gen-ai-error-text">AI did not return content — click to fill in manually.</span>';
+          } else {
+            placeCell.innerHTML = TMSGen.escapeHtml(placeText) + '<span class="gen-ai-badge">AI</span>';
+            placeCell.classList.add('gen-ai-filled');
+          }
+        }
+      }
+
+      function markRowFailed(outcomeId) {
+        var row = document.querySelector('tr[data-outcome-id="' + outcomeId + '"]');
+        if (!row) return;
+        var fields = ['learning_activities', 'resources', 'learning_place', 'evidence'];
+        fields.forEach(function (field) {
+          var cell = row.querySelector('[data-field="' + field + '"]');
+          if (!cell) return;
+          cell.innerHTML = '<span class="gen-ai-error-text">Couldn\'t generate this — click to fill in manually.</span>';
+        });
+      }
+
+      function onAiGenerate() {
+        if (!currentContext) {
+          TMS.toast('Generate a scheme of work first.', 'danger');
+          return;
+        }
+
+        var ctx = currentContext;
+        var outcomeIds = ctx.outcomes.map(function (o) { return o.id; });
+
+        var payload = {
+          sector: ctx.sector ? ctx.sector.sector_name : null,
+          trade: ctx.trade ? ctx.trade.trade_name : null,
+          level: ctx.level ? ctx.level.class_level : null,
+          module_code: ctx.mod.mod_code,
+          module_name: ctx.mod.mod_name,
+          hours_per_week: ctx.hoursPerWeek,
+          outcomes: ctx.outcomes.map(function (o) {
+            return {
+              outcome_id: o.id,
+              learning_unit: TMSGen.shortOutcomeText(o.outcome_text),
+              learning_hours: o.learning_hours,
+              indicative_content: contentsForOutcome(o.id),
+            };
+          }),
+        };
+
+        setAiButtonLoading(true);
+        markRowsLoading(outcomeIds);
+
+        fetch(AI_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+          body: JSON.stringify(payload),
+        })
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error('AI request failed with status ' + response.status);
+            }
+            return response.json();
+          })
+          .then(function (data) {
+            var results = (data && data.results) || [];
+            var resultsById = {};
+            results.forEach(function (r) { resultsById[r.outcome_id] = r; });
+
+            outcomeIds.forEach(function (id) {
+              if (resultsById[id]) {
+                fillRowWithAiResult(id, resultsById[id]);
+              } else {
+                markRowFailed(id);
+              }
+            });
+
+            TMS.toast('AI draft added — review and edit any cell before printing.', 'success');
+          })
+          .catch(function (err) {
+            outcomeIds.forEach(markRowFailed);
+            TMS.toast('Could not reach the AI service. Please try again or fill the fields manually.', 'danger');
+            console.error(err);
+          })
+          .finally(function () {
+            setAiButtonLoading(false);
+          });
+      }
+
+      init();
+    })();
+  </script>
+
+</body>
+</html>

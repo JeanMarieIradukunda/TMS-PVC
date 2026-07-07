@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Training Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<div class="landing-wrap">
+  <span class="landing-glow-a"></span>
+  <span class="landing-glow-b"></span>
+
+  <div class="landing-header">
+    <div class="landing-badge"><i class="fa-solid fa-graduation-cap"></i></div>
+    <h1>Training Management System</h1>
+    <p>Padri Vjeko Centre · plan, manage and deliver your training programme from one place.</p>
+  </div>
+
+  <div class="landing-grid">
+
+    <!-- LOGIN ONLY -->
+    <a href="{% url 'login' %}" class="landing-card lc-login">
+      <div class="lc-icon"><i class="fa-solid fa-right-to-bracket"></i></div>
+      <h3>Login</h3>
+      <p>Sign in with your administrator or trainer account to access the full management system.</p>
+      <div class="lc-cta">Sign in <i class="fa-solid fa-arrow-right-long"></i></div>
+    </a>
+
+    <!-- SCHEME OF WORK (DIRECT ACCESS) -->
+    <a href="{% url 'schemeofwork-user' %}" class="landing-card lc-scheme">
+      <span class="lc-meta">{{ module_count }} module{{ module_count|pluralize }}</span>
+      <div class="lc-icon"><i class="fa-solid fa-diagram-project"></i></div>
+      <h3>Scheme of Work</h3>
+      <p>View and generate structured schemes of work for your selected trade and level.</p>
+      <div class="lc-cta">Generate Scheme <i class="fa-solid fa-arrow-right-long"></i></div>
+    </a>
+
+    <!-- LESSON PLANS (DIRECT ACCESS) -->
+    <a href="{% url 'lessonplan-user' %}" class="landing-card lc-lesson">
+      <span class="lc-meta">{{ lesson_plan_count }} plan{{ lesson_plan_count|pluralize }}</span>
+      <div class="lc-icon"><i class="fa-solid fa-chalkboard"></i></div>
+      <h3>Lesson Plans</h3>
+      <p>Generate ready-to-use lesson plans automatically based on selected modules.</p>
+      <div class="lc-cta">Generate Lesson Plan <i class="fa-solid fa-arrow-right-long"></i></div>
+    </a>
+
+  </div>
+
+  <div class="landing-footer">
+    <i class="fa-solid fa-shield-halved me-1"></i>
+    &copy; {% now "Y" %} Padri Vjeko Centre · Training Management System
+  </div>
+</div>
+
+</body>
+</html>

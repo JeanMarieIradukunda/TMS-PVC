@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · TMS{% endblock %}
+{% block content %}
+
+<div class="topbar">
+  <div>
+    <h1>Welcome back, {{ request.user.username|title }} 👋</h1>
+    <div class="subtitle">Here's what's happening across your training programme.</div>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="card-stat">
+    <div class="label">Sectors</div>
+    <div class="value">{{ sector_count }}</div>
+    <i class="fa-solid fa-industry"></i>
+  </div>
+  <div class="card-stat">
+    <div class="label">Trades</div>
+    <div class="value">{{ trade_count }}</div>
+    <i class="fa-solid fa-toolbox"></i>
+  </div>
+  <div class="card-stat">
+    <div class="label">Levels</div>
+    <div class="value">{{ level_count }}</div>
+    <i class="fa-solid fa-layer-group"></i>
+  </div>
+  <div class="card-stat">
+    <div class="label">Modules</div>
+    <div class="value">{{ module_count }}</div>
+    <i class="fa-solid fa-book-open"></i>
+  </div>
+  <div class="card-stat">
+    <div class="label">Trainers</div>
+    <div class="value">{{ trainer_count }}</div>
+    <i class="fa-solid fa-chalkboard-user"></i>
+  </div>
+  <div class="card-stat">
+    <div class="label">Lesson Plans</div>
+    <div class="value">{{ lesson_plan_count }}</div>
+    <i class="fa-solid fa-chalkboard"></i>
+  </div>
+</div>
+
+<h2 class="h5 mb-3" style="color: var(--navy); font-weight:700;">Quick navigation</h2>
+<div class="quick-nav">
+  <a href="{% url 'sector-list' %}" class="qn-card">
+    <div class="qn-icon"><i class="fa-solid fa-industry"></i></div>
+    <div>
+      <div class="qn-title">Sectors</div>
+      <div class="qn-sub">{{ sector_count }} record{{ sector_count|pluralize }}</div>
+    </div>
+  </a>
+  <a href="{% url 'trade-list' %}" class="qn-card">
+    <div class="qn-icon"><i class="fa-solid fa-toolbox"></i></div>
+    <div>
+      <div class="qn-title">Trades</div>
+      <div class="qn-sub">{{ trade_count }} record{{ trade_count|pluralize }}</div>
+    </div>
+  </a>
+  <a href="{% url 'level-list' %}" class="qn-card">
+    <div class="qn-icon"><i class="fa-solid fa-layer-group"></i></div>
+    <div>
+      <div class="qn-title">Levels</div>
+      <div class="qn-sub">{{ level_count }} record{{ level_count|pluralize }}</div>
+    </div>
+  </a>
+  <a href="{% url 'tradelevel-list' %}" class="qn-card">
+    <div class="qn-icon"><i class="fa-solid fa-diagram-project"></i></div>
+    <div>
+      <div class="qn-title">Trade Levels</div>
+      <div class="qn-sub">Mappings</div>
+    </div>
+  </a>
+  <a href="{% url 'module-list' %}" class="qn-card">
+    <div class="qn-icon"><i class="fa-solid fa-book-open"></i></div>
+    <div>
+      <div class="qn-title">Modules</div>
+      <div class="qn-sub">{{ module_count }} record{{ module_count|pluralize }}</div>
+    </div>
+  </a>
+  <a href="{% url 'trainer-list' %}" class="qn-card">
+    <div class="qn-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+    <div>
+      <div class="qn-title">Trainers</div>
+      <div class="qn-sub">{{ trainer_count }} record{{ trainer_count|pluralize }}</div>
+    </div>
+  </a>
+  <a href="{% url 'outcome-list' %}" class="qn-card">
+    <div class="qn-icon"><i class="fa-solid fa-list-check"></i></div>
+    <div>
+      <div class="qn-title">Learning Outcomes</div>
+      <div class="qn-sub">{{ outcome_count }} record{{ outcome_count|pluralize }}</div>
+    </div>
+  </a>
+  <a href="{% url 'content-list' %}" class="qn-card">
+    <div class="qn-icon"><i class="fa-solid fa-file-lines"></i></div>
+    <div>
+      <div class="qn-title">Indicative Contents</div>
+      <div class="qn-sub">{{ content_count }} record{{ content_count|pluralize }}</div>
+    </div>
+  </a>
+  <a href="{% url 'lessonplan-list' %}" class="qn-card">
+    <div class="qn-icon"><i class="fa-solid fa-chalkboard"></i></div>
+    <div>
+      <div class="qn-title">Lesson Plans</div>
+      <div class="qn-sub">{{ lesson_plan_count }} record{{ lesson_plan_count|pluralize }}</div>
+    </div>
+  </a>
+  <a href="{% url 'logo-list' %}" class="qn-card">
+    {% if latest_logo and latest_logo.image %}
+      <div class="qn-icon qn-icon-image"><img src="{{ latest_logo.image }}" alt="{{ latest_logo.name }}"></div>
+    {% else %}
+      <div class="qn-icon"><i class="fa-solid fa-image"></i></div>
+    {% endif %}
+    <div>
+      <div class="qn-title">Logos</div>
+      <div class="qn-sub">{{ logo_count }} record{{ logo_count|pluralize }}</div>
+    </div>
+  </a>
+</div>
+
+{% endblock %}
